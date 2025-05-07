@@ -60,17 +60,24 @@ print("Accuracy Score:", accuracy_score(y_test, y_pred))
 Dataset shape: (569, 30)
 Target labels: ['malignant' 'benign']
 Selected Features: ['mean radius', 'mean perimeter', 'mean area', 'mean concavity', 'mean concave points', 'worst radius', 'worst perimeter', 'worst area', 'worst concavity', 'worst concave points']
+
 Confusion Matrix:
+
  [[40  3]
  [ 2 69]]
+ 
 Classification Report:
+
                precision    recall  f1-score   support
 
            0       0.95      0.93      0.94        43
            1       0.96      0.97      0.97        71
 
     accuracy                           0.96       114
-   macro avg       0.96      0.95      0.95       114
-weighted avg       0.96      0.96      0.96       114
+    
+   macro avg       0.96          0.95          0.95          114
+   
+weighted avg       0.96          0.96          0.96          114
+
 
 Accuracy Score: 0.956140350877193
