@@ -14,79 +14,56 @@
 
 ## DESCRIPTION
 
-from sklearn.datasets import load_breast_cancer
 
-import pandas as pd
+This Python script builds an interactive web dashboard using the Dash framework to simulate and visualize website user activity data. The dashboard provides a dynamic and intuitive interface to analyze user behavior across different pages of a fictional website, enabling the exploration of engagement metrics such as session duration, frequency, and page-wise distribution.
 
-import numpy as np
+#### 1. **Library Imports and Data Simulation**
 
-import matplotlib.pyplot as plt
+The script starts by importing necessary libraries:
 
-from sklearn.model_selection import train_test_split
+* `dash`, `dcc`, and `html` from Dash for web interface creation.
+* `pandas` and `numpy` for data manipulation and simulation.
+* `plotly.express` for rich interactive visualizations.
+* `datetime` for generating realistic timestamps.
 
-from sklearn.preprocessing import StandardScaler
+Instead of relying on an external data source, the script simulates a dataset representing user interactions. It defines 100,000 random session records with the following structure:
 
-from sklearn.feature_selection import SelectKBest, f_classif
+* `user_id`: Randomly selected from a pool of 50 users (e.g., "user\_1" to "user\_50").
+* `page`: Randomly selected from a list of common website pages like 'home', 'products', and 'checkout'.
+* `duration`: Generated from an exponential distribution to simulate session time in seconds.
+* `timestamp`: Simulated across a range of dates beginning January 1, 2024, by adding random seconds to a base datetime.
 
-from sklearn.ensemble import RandomForestClassifier
+This synthetic dataset mimics real-world web usage patterns and serves as the foundation for the dashboard's interactivity.
 
-from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
+#### 2. **Dash Application Setup**
 
+A Dash app instance is initialized with a title. The layout of the dashboard is organized using Dash's HTML and core component modules:
 
-# 2. Load Inbuilt Dataset
-data = load_breast_cancer()
-X = pd.DataFrame(data.data, columns=data.feature_names)
-y = pd.Series(data.target)
+* A main heading titled "Interactive User Activity Dashboard".
+* A dropdown component (`dcc.Dropdown`) that lets the user select a specific user ID from the dataset.
+* Two graphs aligned side-by-side using a flexible box layout:
 
-print("Dataset shape:", X.shape)
-print("Target labels:", data.target_names)
+  * A bar chart of total time spent on each page by all users.
+  * A bar chart showing the average session duration per page for the selected user.
+* A third graph placed below, which displays a histogram of session durations across all users.
 
-# 3. Feature Scaling
-scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X)
+This layout ensures a clean and responsive interface, making it easy for users to draw insights from multiple perspectives.
 
-# 4. Feature Selection
-selector = SelectKBest(score_func=f_classif, k=10)
-X_selected = selector.fit_transform(X_scaled, y)
-selected_features = X.columns[selector.get_support()]
-print("Selected Features:", selected_features.tolist())
+#### 3. **Callback for Interactivity**
 
-# 5. Split Data
-X_train, X_test, y_train, y_test = train_test_split(X_selected, y, test_size=0.2, random_state=42)
+The core logic of the interactivity lies in the Dash callback function, which updates all three graphs whenever a new user is selected from the dropdown:
 
-# 6. Train Model
-model = RandomForestClassifier(random_state=42)
-model.fit(X_train, y_train)
+* **Total Time per Page (`fig1`)**: Aggregates duration across all users, showing which pages are most engaged.
+* **Average Session Duration by Page for Selected User (`fig2`)**: Filters the dataset for the selected user and calculates the mean duration spent on each page, giving a personalized view of behavior.
+* **Session Duration Distribution (`fig3`)**: A histogram of session durations for all users, providing insights into session length trends and outliers.
 
-# 7. Evaluate
-y_pred = model.predict(X_test)
-print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred))
-print("Classification Report:\n", classification_report(y_test, y_pred))
-print("Accuracy Score:", accuracy_score(y_test, y_pred))
+These charts are dynamically generated using Plotly Express, which ensures interactive capabilities such as tooltips and zooming.
+
+#### 4. **Execution**
+
+The final block checks if the script is being run as the main module and starts the Dash server with `debug=True`, enabling hot reloading during development.
 
 ## OUTPUT
 
-Dataset shape: (569, 30)
-Target labels: ['malignant' 'benign']
-Selected Features: ['mean radius', 'mean perimeter', 'mean area', 'mean concavity', 'mean concave points', 'worst radius', 'worst perimeter', 'worst area', 'worst concavity', 'worst concave points']
-
-Confusion Matrix:
-
- [[40  3]
- [ 2 69]]
- 
-Classification Report:
-
-               precision    recall  f1-score   support
-
-           0       0.95      0.93      0.94        43
-           1       0.96      0.97      0.97        71
-
-    accuracy                           0.96       114
-    
-   macro avg       0.96          0.95          0.95          114
-   
-weighted avg       0.96          0.96          0.96          114
 
 
-Accuracy Score: 0.956140350877193
